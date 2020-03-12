@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://www.1iwl.com</id>
+    <title>liwl&apos;s blog</title>
+    <updated>2020-03-12T08:16:54.500Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://www.1iwl.com"/>
+    <link rel="self" href="https://www.1iwl.com/atom.xml"/>
+    <subtitle>一个小运维而已</subtitle>
+    <logo>https://www.1iwl.com/images/avatar.png</logo>
+    <icon>https://www.1iwl.com/favicon.ico</icon>
+    <rights>All rights reserved 2020, liwl&apos;s blog</rights>
+    <entry>
+        <title type="html"><![CDATA[迁移至 Gridea]]></title>
+        <id>https://www.1iwl.com/post/hello-gridea/</id>
+        <link href="https://www.1iwl.com/post/hello-gridea/">
+        </link>
+        <updated>2020-03-11T06:03:02.000Z</updated>
+        <summary type="html"><![CDATA[<p>✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+<!-- more -->
+<p><a href="https://github.com/getgridea/gridea">Github</a><br>
+<a href="https://gridea.dev/">Gridea 主页</a><br>
+<a href="http://fehey.com/">示例网站</a></p>
+<h2 id="特性">特性👇</h2>
+<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
+<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
+<p>🏷️  你可以对文章进行标签分组</p>
+<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
+<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
+<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
+<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
+<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
+<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
+<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
+<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
+<p>未来，它一定会成为你离不开的伙伴</p>
+<p>尽情发挥你的才华吧！</p>
+<p>😘 Enjoy~</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[binlog2sql]]></title>
+        <id>https://www.1iwl.com/post/binlog2sql/</id>
+        <link href="https://www.1iwl.com/post/binlog2sql/">
+        </link>
+        <updated>2019-05-17T05:45:03.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="安装">安装</h1>
+<pre><code>git clone https://github.com/danfengcao/binlog2sql.git &amp;&amp; cd binlog2sql
+pip install -r requirements.txt
+</code></pre>
+<h1 id="mysql配置">mysql配置</h1>
+<pre><code>binlog_format = row
+binlog_row_image = full
+</code></pre>
+<p><strong>如果数据库包含中文</strong><br>
+reload(sys)<br>
+sys.setdefaultencoding('utf8')</p>
+<h1 id="所需要最小权限">所需要最小权限</h1>
+<pre><code>select, super/replication client, replication slave
+GRANT SELECT, REPLICATION SLAVE, REPLICATION CLIENT
+</code></pre>
+<h1 id="执行">执行</h1>
+<pre><code>python binlog2sql.py \
+-h 127.0.0.1 \
+-P 3306 \
+-uliwl \
+-p'123123' \
+--start-file='binlog.000032'
+
+-dtest \
+-t test3 test4
+</code></pre>
+<h2 id="生成回滚语句">生成回滚语句</h2>
+<pre><code>--flashback
+</code></pre>
+<h1 id="测试update不带where">测试update不带where</h1>
+<pre><code>UPDATE Websites SET alexa = '5000', country = 'USA'
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://www.1iwl.com/post-images/1583992549228.png" alt="" loading="lazy"></figure>
+<h2 id="通过binlog2sql远程解析binlog最热dml语句">通过binlog2sql远程解析binlog最热dml语句</h2>
+<pre><code>python binlog2sql.py -h 127.0.0.1 -P 3306 -uliwl -p'123123'  \
+--start-file='binlog.000033' \
+ |awk '/UPDATE|INSERT|DELETE/{gsub(&quot;###&quot;,&quot;&quot;);gsub(&quot;INSERT.*INTO&quot;,&quot;INSERT&quot;);gsub(&quot;DELETE.*FROM&quot;,&quot;DELETE&quot;);count[$1&quot;&quot;$2]++}END{for(i in count)print i,&quot;\t&quot;,count[i]}'|sort -k3nr|head -n 20
+</code></pre>
+<h2 id="通过mysqlbinlog远程解析binlog最热dml语句">通过mysqlbinlog远程解析binlog最热dml语句</h2>
+<pre><code>mysqlbinlog \
+--no-defaults \
+--read-from-remote-server \
+-h 127.0.0.1 -P 3306 -uliwl -p123123 \
+--base64-output=decode-rows \
+-vv \
+--start-datetime=&quot;2019-05-01 00:00:01&quot; \
+--stop-datetime=&quot;2019-05-17 23:59:59&quot; \
+binlog.000033 \
+|awk '/UPDATE|INSERT|DELETE/{gsub(&quot;###&quot;,&quot;&quot;);gsub(&quot;INSERT.*INTO&quot;,&quot;INSERT&quot;);gsub(&quot;DELETE.*FROM&quot;,&quot;DELETE&quot;);count[$1&quot;&quot;$2]++}END{for(i in count)print i,&quot;\t&quot;,count[i]}'|sort -k3nr|head -n 20
+</code></pre>
+<h1 id="ref">Ref</h1>
+<p><a href="https://github.com/danfengcao/binlog2sql">github</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[初次尝试制作镜像]]></title>
+        <id>https://www.1iwl.com/post/chu-ci-chang-shi-zhi-zuo-jing-xiang/</id>
+        <link href="https://www.1iwl.com/post/chu-ci-chang-shi-zhi-zuo-jing-xiang/">
+        </link>
+        <updated>2019-05-07T03:15:39.000Z</updated>
+        <content type="html"><![CDATA[<p><em><strong>Typecho</strong></em></p>
+<p><a href="https://github.com/1iwl/typecho_Docker">typecho_Docker</a></p>
+<p><em><strong>coreseek</strong></em></p>
+<p><a href="https://github.com/1iwl/coreseek_docker">coreseek_docker</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[nginx日志json格式化]]></title>
+        <id>https://www.1iwl.com/post/nginx-ri-zhi-json-ge-shi-hua/</id>
+        <link href="https://www.1iwl.com/post/nginx-ri-zhi-json-ge-shi-hua/">
+        </link>
+        <updated>2019-04-19T04:15:30.000Z</updated>
+        <content type="html"><![CDATA[<p>cat nginx.conf</p>
+<pre><code>log_format log_json '{ &quot;@timestamp&quot;: &quot;$time_local&quot;, '
+    '&quot;remote_addr&quot;: &quot;$remote_addr&quot;, '
+    '&quot;referer&quot;: &quot;$http_referer&quot;, '
+    '&quot;request&quot;: &quot;$request&quot;, '
+    '&quot;status&quot;: $status, '
+    '&quot;bytes&quot;: $body_bytes_sent, '
+    '&quot;agent&quot;: &quot;$http_user_agent&quot;, '
+    '&quot;x_forwarded&quot;: &quot;$http_x_forwarded_for&quot;, '
+    '&quot;up_addr&quot;: &quot;$upstream_addr&quot;,'
+    '&quot;up_host&quot;: &quot;$upstream_http_host&quot;,'
+    '&quot;up_resp_time&quot;: &quot;$upstream_response_time&quot;,'
+    '&quot;request_time&quot;: &quot;$request_time&quot;'
+    ' }';
+</code></pre>
+<p>tail -f access.log</p>
+<pre><code>{ &quot;@timestamp&quot;: &quot;19/Apr/2019:10:10:51 +0800&quot;, &quot;remote_addr&quot;: &quot;47.***.***.225&quot;, &quot;referer&quot;: &quot;https://www.1iwl.com/archives/265/&quot;, &quot;request&quot;: &quot;GET /archives/265/ HTTP/1.1&quot;, &quot;status&quot;: 200, &quot;bytes&quot;: 6366, &quot;agent&quot;: &quot;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36&quot;, &quot;x_forwarded&quot;: &quot;-&quot;, &quot;up_addr&quot;: &quot;*.*.*.*:9000&quot;,&quot;up_host&quot;: &quot;-&quot;,&quot;up_resp_time&quot;: &quot;0.028&quot;,&quot;request_time&quot;: &quot;0.028&quot; }
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://www.1iwl.com/post-images/1583986582796.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于微博图床可以找到用户ID..]]></title>
+        <id>https://www.1iwl.com/post/guan-yu-wei-bo-tu-chuang-ke-yi-zhao-dao-yong-hu-id/</id>
+        <link href="https://www.1iwl.com/post/guan-yu-wei-bo-tu-chuang-ke-yi-zhao-dao-yong-hu-id/">
+        </link>
+        <updated>2017-09-12T06:21:50.000Z</updated>
+        <content type="html"><![CDATA[<p>##证明：</p>
+<p>http://wx4.sinaimg.cn/mw690/69bfef1bgy1fj8ez29110j20j60r4td1.jpg<br>
+文件名是</p>
+<pre><code>69bfef1bgy1fj8ez29110j20j60r4td1
+</code></pre>
+<p>前8位</p>
+<pre><code>69bfef1b
+</code></pre>
+<p>用 16 进制转换下变为</p>
+<pre><code>1774186267
+</code></pre>
+<p>就是用户 uid</p>
+<p>已经有工具出现<br>
+http://applehater.cn/who-weibo.html</p>
+<h2 id="ref">Ref</h2>
+<pre><code>https://www.v2ex.com/t/388152?p=1</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[经典的Fork炸弹]]></title>
+        <id>https://www.1iwl.com/post/jing-dian-de-fork-zha-dan/</id>
+        <link href="https://www.1iwl.com/post/jing-dian-de-fork-zha-dan/">
+        </link>
+        <updated>2017-09-12T06:17:18.000Z</updated>
+        <content type="html"><![CDATA[<p>Jaromil在2002年设计了最为精简的一个Linux Fork炸弹,整个代码只有13个字符，在shell中运行后几秒后系统就会宕机：</p>
+<pre><code>:() { :|:&amp; };:
+</code></pre>
+<p>这样看起来不是很好理解，我们可以更改下格式：</p>
+<pre><code>:()
+{
+    :|:&amp;
+};
+:
+</code></pre>
+<p>更好理解一点的话就是这样:</p>
+<pre><code>bomb()
+{
+    bomb|bomb&amp;
+};
+</code></pre>
+<h1 id="bomb">bomb</h1>
+<p>因为shell中函数可以省略function关键字，所以上面的十三个字符是功能是定义一个函数与调用这个函数，函数的名称为:,主要的核心代码是：|：&amp;，可以看出这是一个函数本身的递归调用，通过&amp;实现在后台开启新进程运行，通过管道实现进程呈几何形式增长，最后再通过：来调用函数引爆炸弹.因此，几秒钟系统就会因为处理不过来太多的进程而死机，解决的唯一办法就是重启。</p>
+<h1 id="预防方式">预防方式</h1>
+<p>Fork炸弹的本质无非就是靠创建进程来抢占系统资源，在Linux中，我们可以通过ulimit命令来限制用户的某些行为，运行</p>
+<pre><code>ulimit -a
+</code></pre>
+<p>可以查看我们能做哪些限制：</p>
+<figure data-type="image" tabindex="1"><img src="https://www.1iwl.com/post-images/1583993991202.png" alt="" loading="lazy"></figure>
+<p>可以看到，-u参数可以限制用户创建进程数，因此，我们可以使用ulimit -u 20来允许用户最多创建20个进程。这样就可以预防bomb炸弹。但这样是不彻底的，关闭终端后这个命令就失效了。我们可以通过修改/etc/security/limits.conf文件来进行更深层次的预防</p>
+<pre><code>ulimit -SHn 65535
+</code></pre>
+<h1 id="参考">参考</h1>
+<pre><code>https://blog.saymagic.tech/2015/03/25/fork-bomb.html
+http://en.wikipedia.org/wiki/Fork_bomb
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[PHP使用Mysql碰到的问题]]></title>
+        <id>https://www.1iwl.com/post/php-shi-yong-mysql-peng-dao-de-wen-ti/</id>
+        <link href="https://www.1iwl.com/post/php-shi-yong-mysql-peng-dao-de-wen-ti/">
+        </link>
+        <updated>2016-12-12T06:12:42.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="问题">问题</h1>
+<p>今天修改typecho，心血来潮想使用localhost来连接mysql,结果发生了错误<br>
+PHP程序通过localhost地址无法连接数据库，但是如果设置为127.0.0.1则可以正常连接，连接其他数据库服务器也正常。<br>
+MySQL的权限设置正确，且通过mysql命令行客户端可以正常连接数据库。</p>
+<h1 id="分析">分析</h1>
+<p>连接MySQL数据库有两种方式：TCP/IP（一般理解的端口的那种）和Unix套接字（一般叫socket或者sock）。大部分情况下，可以用localhost代表本机127.0.0.1，但是在MySQL连接时，二者不可混用，而且MySQL中权限设置中localhost与127.0.0.1也是分开设置的。<br>
+当设置为127.0.0.1时，系统通过TCP/IP方式连接数据库；当设置为localhost时，系统通过socket方式连接数据库。</p>
+<h1 id="解决">解决</h1>
+<p>首先要看本机MySQL的socket套接字文件在哪里，查看命令是：</p>
+<pre><code>mysqld --verbose --help | grep socket
+</code></pre>
+<p>输出结果显示套接字文件的位置，比如：这台服务器显示的是</p>
+<pre><code>2323:socket                                                     /data/mysql/mysql.sock
+</code></pre>
+<p>然后修改php的配置文件php.ini与之对应起来就好了。<br>
+找到这一项：</p>
+<pre><code>mysql.default_socket =
+</code></pre>
+<p>一般来说这一项都是空的，改成：</p>
+<pre><code>mysql.default_socket = /data/mysql/mysql.sock
+</code></pre>
+<p>这里应写上一步查询到的文件，根据你的情况设置。至此php配置就修改好了，如果是CLI（命令行）方式或者CGI方式的话，立即就生效，如果是FASTCGI方式，需要重启一下fastcgi进程。</p>
+<h1 id="区别">区别</h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">localhost</th>
+<th style="text-align:center">127.0.0.1</th>
+<th style="text-align:center">本机IP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">网络</td>
+<td style="text-align:center">不联网</td>
+<td style="text-align:center">不联网</td>
+<td style="text-align:center">联网</td>
+</tr>
+<tr>
+<td style="text-align:center">传输</td>
+<td style="text-align:center">不使用网卡，不受防火墙和网卡限制</td>
+<td style="text-align:center">网卡传输，受防火墙和网卡限制</td>
+<td style="text-align:center">网卡传输，受防火墙和网卡限制</td>
+</tr>
+<tr>
+<td style="text-align:center">访问</td>
+<td style="text-align:center">本机访问</td>
+<td style="text-align:center">本机访问</td>
+<td style="text-align:center">本机或外部访问</td>
+</tr>
+</tbody>
+</table>
+<h1 id="参考文献">参考文献</h1>
+<pre><code>http://blog.csdn.net/xifeijian/article/details/12879395
+http://www.centoscn.com/CentosBug/softbug/2013/1105/2058.html
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于工作的一些事儿~]]></title>
+        <id>https://www.1iwl.com/post/guan-yu-gong-zuo-de-yi-xie-shi-er-~/</id>
+        <link href="https://www.1iwl.com/post/guan-yu-gong-zuo-de-yi-xie-shi-er-~/">
+        </link>
+        <updated>2016-03-12T06:01:52.000Z</updated>
+        <content type="html"><![CDATA[<h2 id=""></h2>
+<p>对于运维人员的重视，其实是个伪命题<br>
+我想说的就是对于运维人员的重视问题，我也是运维人，说实话其实我们很受伤。<br>
+简单来说分为以下四点：</p>
+<blockquote>
+<p>1.运维工作中会有着大量的琐碎事务，有一部分是重复性的任务。<br>
+2.运维工作不能直接创造价值，简单来说就是运维部门就是只花钱不挣钱<br>
+3.运维工作很多都需要7*24小时支持，在节假日或者大清早，大晚上他们总有一些事情需要处理，当然我敢肯定其实他们也不想这样。<br>
+4.没有问题的时候大家其乐融融，出了问题我们就是传说中的背锅侠。</p>
+</blockquote>
+<h2 id="真正的职场关怀">真正的职场关怀</h2>
+<blockquote>
+<p>1.有明确公开的升职加薪路径<br>
+2.回报和付出成正比，“工作-生活平衡”和“工作-收入平衡”，你总得占一样吧?<br>
+3.给我有意义的工作做，帮老板拿个快卖可以，全部都是拿外卖级别的事情可不行。<br>
+4.没有拉帮结派和办公室政治。<br>
+5.多点教程，少点教育。多教怎么工作，少教怎么做人。</p>
+</blockquote>
+<h2 id="关于工资">关于工资</h2>
+<blockquote>
+<p>工资不是用来支付给技能的，不要以为技能越高、工资自然应该越高。<br>
+工资是用来支付给责任的，责任越大，工资越高。<br>
+涨工资，是因为承担了更大的责任。<br>
+面向工资工作。</p>
+</blockquote>
+<hr>
+<pre><code>一些做运维做监控的其他同事，则经常需要“救火”。比如说《王者荣耀》搞活动，大多人参与导致服务器撑不住了，就需要有人马上去限流、扩容或者转移压力到其他服务器上。
+说到“救火”，我倒有些感悟。在外人的角度来看，可能腾讯对外提供的各种服务都是高可用的。但其实背后是很多人在做技术支撑。软件也好、服务器也好，都是死的。总在各种情况下出各种乱七八糟的bug。倒不是说一定是代码太烂。有时候纯属因为业务复杂、服务器压力大而引发的各种意外问题。只有人才是活的。有人，这些bug能得到快速修复，出问题了能快速得到响应。这让我想起了一部纪录片《人类消失后的世界》。在科学家的预测里，如果没有人类，几乎所有高楼大厦、公路大桥、汽车飞机在100年内基本完全被大自然消解。也就是说，今天能看到的很多东西，都是因为背后有人一直在维护，在更新、维护和延长这些物体的使用寿命。没有东西能永远可靠和稳定。有人维护才是关键。
+运维人员最重要的素质还是解决问题的能力与思路,而不是熟练记住针对某个特定细节的实现. 
+</code></pre>
+<hr>
+<h1 id="细节决定成败">细节决定成败</h1>
+<p>1.厕所<br>
+不希望每次推开厕所门的时候都要捂住鼻子，因为很大概率会看到马桶里一坨屎没有冲。<br>
+更夸张的一次是整个马桶上被喷射状的屎给覆盖。<br>
+公司作为一个人的主要工作场所，解决生理需求的时候看到这些是很影响心情的。<br>
+2.显示器<br>
+最好是高分辨率的屏幕，因为有时候处理，需要大面积的可视面积，大屏幕是可以很大的提高工作效率的。<br>
+现在23寸大概在1000左右，相信连初创公司都可以买得起二手的。<br>
+3.请在乎一下员工的感受<br>
+越好的公司,面试的人越是友善,环境也越好<br>
+亲耳听到 hr 说的:&quot;虽然他能力还不足，但他是 211 毕业的&quot;</p>
+<h1 id="面试">面试</h1>
+<p>面试官：如何保证内存里的数据永不丢失，包括断电的时候。<br>
+我：数据持久化、分布式，配合硬件上的灾备支持。<br>
+面试官：不对<br>
+我：那有什么好方法分享一下吗<br>
+面试官：我就不跟你多说了，你回去了解一下<br>
+我:??</p>
+<h2 id="如果在错误中做到这4点那么你就会不断成长">如果在错误中做到这4点，那么你就会不断成长：</h2>
+<pre><code>嘲笑自己。
+从中汲取经验教训。
+改正错误。
+分享自己的错误，让其他人也有所收获。
+</code></pre>
+<h2 id="最后我想讲一个关于错误价值的轶事">最后，我想讲一个关于错误价值的轶事。</h2>
+<pre><code>20世纪初，IBM的首席执行官托马斯·J·沃森曾遇到过一名员工，这名员工的一系列糟糕决策让公司付出了巨大代价。当沃森被问到是否会解雇这名员工时，他回应道：
+“不，我刚在他身上花了60万美元的培训费。为什么要让别人白白捡去这个便宜？”
+</code></pre>
+<h1 id="ref">REF</h1>
+<pre><code>http://blog.star7th.com/2017/05/2172.html
+http://www.jianshu.com/p/bc7f820ecb73
+https://mp.weixin.qq.com/s/FBNRxlIaptLVNxlnp-WnbQ</code></pre>
+]]></content>
+    </entry>
+</feed>

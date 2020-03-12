@@ -1,0 +1,222 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>经典的Fork炸弹 | liwl&#39;s blog</title>
+<link rel="shortcut icon" href="https://www.1iwl.com/favicon.ico?v=1584001008151">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://www.1iwl.com/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="经典的Fork炸弹 | liwl&#39;s blog - Atom Feed" href="https://www.1iwl.com/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Jaromil在2002年设计了最为精简的一个Linux Fork炸弹,整个代码只有13个字符，在shell中运行后几秒后系统就会宕机：
+:() { :|:&amp; };:
+
+这样看起来不是很好理解，我们可以更改下格式：
+:()
+{
+  ..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://www.1iwl.com">
+  <img class="avatar" src="https://www.1iwl.com/images/avatar.png?v=1584001008151" alt="">
+  </a>
+  <h1 class="site-title">
+    liwl&#39;s blog
+  </h1>
+  <p class="site-description">
+    一个小运维而已
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/you-qing-lian-jie" class="menu">
+          友情链接
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/1iwl" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+        <a href="https://weibo.com/lwl930719" target="_blank">
+          <i class="ri-weibo-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              经典的Fork炸弹
+            </h2>
+            <div class="post-info">
+              <span>
+                2017-09-12
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://www.1iwl.com/post-images/jing-dian-de-fork-zha-dan.jpg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>Jaromil在2002年设计了最为精简的一个Linux Fork炸弹,整个代码只有13个字符，在shell中运行后几秒后系统就会宕机：</p>
+<pre><code>:() { :|:&amp; };:
+</code></pre>
+<p>这样看起来不是很好理解，我们可以更改下格式：</p>
+<pre><code>:()
+{
+    :|:&amp;
+};
+:
+</code></pre>
+<p>更好理解一点的话就是这样:</p>
+<pre><code>bomb()
+{
+    bomb|bomb&amp;
+};
+</code></pre>
+<h1 id="bomb">bomb</h1>
+<p>因为shell中函数可以省略function关键字，所以上面的十三个字符是功能是定义一个函数与调用这个函数，函数的名称为:,主要的核心代码是：|：&amp;，可以看出这是一个函数本身的递归调用，通过&amp;实现在后台开启新进程运行，通过管道实现进程呈几何形式增长，最后再通过：来调用函数引爆炸弹.因此，几秒钟系统就会因为处理不过来太多的进程而死机，解决的唯一办法就是重启。</p>
+<h1 id="预防方式">预防方式</h1>
+<p>Fork炸弹的本质无非就是靠创建进程来抢占系统资源，在Linux中，我们可以通过ulimit命令来限制用户的某些行为，运行</p>
+<pre><code>ulimit -a
+</code></pre>
+<p>可以查看我们能做哪些限制：</p>
+<figure data-type="image" tabindex="1"><img src="https://www.1iwl.com/post-images/1583993991202.png" alt="" loading="lazy"></figure>
+<p>可以看到，-u参数可以限制用户创建进程数，因此，我们可以使用ulimit -u 20来允许用户最多创建20个进程。这样就可以预防bomb炸弹。但这样是不彻底的，关闭终端后这个命令就失效了。我们可以通过修改/etc/security/limits.conf文件来进行更深层次的预防</p>
+<pre><code>ulimit -SHn 65535
+</code></pre>
+<h1 id="参考">参考</h1>
+<pre><code>https://blog.saymagic.tech/2015/03/25/fork-bomb.html
+http://en.wikipedia.org/wiki/Fork_bomb
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#bomb">bomb</a></li>
+<li><a href="#%E9%A2%84%E9%98%B2%E6%96%B9%E5%BC%8F">预防方式</a></li>
+<li><a href="#%E5%8F%82%E8%80%83">参考</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://www.1iwl.com/post/php-shi-yong-mysql-peng-dao-de-wen-ti/">
+              <h3 class="post-title">
+                PHP使用Mysql碰到的问题
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://www.1iwl.com/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

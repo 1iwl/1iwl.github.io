@@ -1,0 +1,201 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>nginx日志json格式化 | liwl&#39;s blog</title>
+<link rel="shortcut icon" href="https://www.1iwl.com/favicon.ico?v=1584001008151">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://www.1iwl.com/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="nginx日志json格式化 | liwl&#39;s blog - Atom Feed" href="https://www.1iwl.com/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="cat nginx.conf
+log_format log_json '{ &quot;@timestamp&quot;: &quot;$time_local&quot;, '
+    '&quot;remote_addr&quot;: &..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://www.1iwl.com">
+  <img class="avatar" src="https://www.1iwl.com/images/avatar.png?v=1584001008151" alt="">
+  </a>
+  <h1 class="site-title">
+    liwl&#39;s blog
+  </h1>
+  <p class="site-description">
+    一个小运维而已
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/you-qing-lian-jie" class="menu">
+          友情链接
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/1iwl" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+        <a href="https://weibo.com/lwl930719" target="_blank">
+          <i class="ri-weibo-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              nginx日志json格式化
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-04-19
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://www.1iwl.com/post-images/nginx-ri-zhi-json-ge-shi-hua.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>cat nginx.conf</p>
+<pre><code>log_format log_json '{ &quot;@timestamp&quot;: &quot;$time_local&quot;, '
+    '&quot;remote_addr&quot;: &quot;$remote_addr&quot;, '
+    '&quot;referer&quot;: &quot;$http_referer&quot;, '
+    '&quot;request&quot;: &quot;$request&quot;, '
+    '&quot;status&quot;: $status, '
+    '&quot;bytes&quot;: $body_bytes_sent, '
+    '&quot;agent&quot;: &quot;$http_user_agent&quot;, '
+    '&quot;x_forwarded&quot;: &quot;$http_x_forwarded_for&quot;, '
+    '&quot;up_addr&quot;: &quot;$upstream_addr&quot;,'
+    '&quot;up_host&quot;: &quot;$upstream_http_host&quot;,'
+    '&quot;up_resp_time&quot;: &quot;$upstream_response_time&quot;,'
+    '&quot;request_time&quot;: &quot;$request_time&quot;'
+    ' }';
+</code></pre>
+<p>tail -f access.log</p>
+<pre><code>{ &quot;@timestamp&quot;: &quot;19/Apr/2019:10:10:51 +0800&quot;, &quot;remote_addr&quot;: &quot;47.***.***.225&quot;, &quot;referer&quot;: &quot;https://www.1iwl.com/archives/265/&quot;, &quot;request&quot;: &quot;GET /archives/265/ HTTP/1.1&quot;, &quot;status&quot;: 200, &quot;bytes&quot;: 6366, &quot;agent&quot;: &quot;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36&quot;, &quot;x_forwarded&quot;: &quot;-&quot;, &quot;up_addr&quot;: &quot;*.*.*.*:9000&quot;,&quot;up_host&quot;: &quot;-&quot;,&quot;up_resp_time&quot;: &quot;0.028&quot;,&quot;request_time&quot;: &quot;0.028&quot; }
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://www.1iwl.com/post-images/1583986582796.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://www.1iwl.com/post/guan-yu-wei-bo-tu-chuang-ke-yi-zhao-dao-yong-hu-id/">
+              <h3 class="post-title">
+                关于微博图床可以找到用户ID..
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://www.1iwl.com/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
